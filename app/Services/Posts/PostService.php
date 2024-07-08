@@ -35,7 +35,24 @@ class PostService
         return new PostDetailResource($post);
     }
 
-    public function updatePost(int $id)
+    public function updatePost(PostDto $data, int $id)
     {
+        $post = Post::find($id);
+
+        if (!empty($post)) {
+            $post->title = $data->title;
+            $post->news_content = $data->news_content;
+
+            $post->save();
+
+            return response()->json([
+                'status' => 200,
+                'message' => "OK"
+            ], 200);
+        } else {
+            return response()->json([
+                "message" => "Post Not Found"
+            ], 404);
+        }
     }
 }

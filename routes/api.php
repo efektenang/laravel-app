@@ -20,6 +20,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/posts', [PostController::class, 'index']);
     Route::get('/posts/{id}', [PostController::class, 'show']);
     Route::post('/posts/create', [PostController::class, 'create']);
+    Route::put('/posts/{id}', [PostController::class, 'update'])->middleware('author');
     
     Route::get('/auth/profile', [AuthenticationController::class, 'me']);
     Route::get('/auth/logout', [AuthenticationController::class, 'logout']);
