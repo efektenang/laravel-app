@@ -5,6 +5,7 @@ namespace App\Services\Posts;
 use App\DataTransferObjects\PostDto;
 use App\Http\Resources\PostDetailResource;
 use App\Models\Post;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class PostService
 {
@@ -26,11 +27,7 @@ class PostService
     {
         $post = Post::with('writer:id,username')->find($id);
 
-        if (empty($post)) {
-            return response()->json([
-                'message' => "Post not found!"
-            ], 404);
-        }
+        if (!$post) throw new ModelNotFoundException('Post with ID: ' . $id . ' not found!');
 
         return new PostDetailResource($post);
     }
@@ -39,20 +36,23 @@ class PostService
     {
         $post = Post::find($id);
 
-        if (!empty($post)) {
-            $post->title = $data->title;
-            $post->news_content = $data->news_content;
+        if (!empty($post)) throw new ModelNotFoundException('Post with ID: ' . $id . ' not found!');
 
-            $post->save();
+        $post->title = $data->title;
+        $post->news_content = $data->news_content;
+        $post->save();
 
-            return response()->json([
-                'status' => 200,
-                'message' => "OK"
-            ], 200);
-        } else {
-            return response()->json([
-                "message" => "Post Not Found"
-            ], 404);
-        }
+        return response()->json($post);
+    }
+
+    public function deletePost(int $id)
+    {
+        $checkPost = Post::where('id', $id)->exists();
+        $post = Post::find($id);
+        if (!$checkPost) throw new ModelNotFoundException('Post with ID: ' . $id . ' not found!');
+
+        $post->delete();
+
+        return response()->json($post);
     }
 }

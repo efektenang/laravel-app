@@ -16,17 +16,17 @@ use App\Http\Controllers\Auth\AuthenticationController;
 |
 */
 
+// Authentication Route
+Route::post('/auth/register', [AuthenticationController::class, 'register']);
+Route::post('/auth/login', [AuthenticationController::class, 'login']);
+
 Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('/auth/profile', [AuthenticationController::class, 'me']);
+    Route::get('/auth/logout', [AuthenticationController::class, 'logout']);
+
     Route::get('/posts', [PostController::class, 'index']);
     Route::get('/posts/{id}', [PostController::class, 'show']);
     Route::post('/posts/create', [PostController::class, 'create']);
     Route::put('/posts/{id}', [PostController::class, 'update'])->middleware('author');
-    
-    Route::get('/auth/profile', [AuthenticationController::class, 'me']);
-    Route::get('/auth/logout', [AuthenticationController::class, 'logout']);
+    Route::delete('/posts/{id}', [PostController::class, 'delete'])->middleware('author');
 });
-
-
-// Authentication Route
-Route::post('/auth/register', [AuthenticationController::class, 'register']);
-Route::post('/auth/login', [AuthenticationController::class, 'login']);

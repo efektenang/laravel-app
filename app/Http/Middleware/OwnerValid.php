@@ -21,10 +21,12 @@ class OwnerValid
         $currentUser = Auth::user();
         $post = Post::find($request->id);
 
-        if ($post->author !== $currentUser->id) {
-            return response()->json([
-                'message' => "You are not owner."
-            ], 403);
+        if (!empty($post->author)) {
+            if ($post->author !== $currentUser->id) {
+                return response()->json([
+                    'message' => "You are not owner."
+                ], 403);
+            }
         }
 
         return $next($request);
